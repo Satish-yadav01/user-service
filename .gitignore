@@ -1,0 +1,32 @@
+# ============================
+# Java / Spring Boot
+# ============================
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+
+# Lombok generated files
+*.lombok.log
+
+# ============================
+# Build directories
+# ============================
+/target/
+/build/
+/out/
+
+# ============================
+# Environment & Secret files
+# ============================
+.env
+.env.*
+*.secret
+*.key
+*.pem
+*.p12
+secrets/
+config/*.env
+
+# Docker

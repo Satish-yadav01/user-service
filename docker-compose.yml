@@ -23,7 +23,7 @@ services:
       DB_PASSWORD: password
       JWT_SECRET: change_this_to_a_very_long_random_secret_at_least_32_chars
     ports:
-      - "8080:8080"
+      - "8081:8081"
 
 volumes:
   db-data:
