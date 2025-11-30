@@ -1,10 +1,11 @@
 package com.example.userservice.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+
+import javax.validation.constraints.*;
 
 public class AuthRequest {
-    @Email @NotBlank
+    @Email
+    @NotBlank
     private String email;
     @NotBlank
     private String password;

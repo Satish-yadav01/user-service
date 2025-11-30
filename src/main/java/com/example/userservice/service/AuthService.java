@@ -5,11 +5,13 @@ import com.example.userservice.dto.RegisterRequest;
 import com.example.userservice.entity.User;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.security.JwtService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -25,6 +27,7 @@ public class AuthService {
 
     @Transactional
     public String register(RegisterRequest request) {
+        log.info("Registering user with email: {} and request : {}", request.getEmail(),request);
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already registered");
         }
@@ -34,10 +37,13 @@ public class AuthService {
         u.setProvider("LOCAL");
         u.setRoles("ROLE_USER");
         userRepository.save(u);
-        return jwtService.generateToken(u.getEmail());
+        String token = jwtService.generateToken(u.getEmail());
+        log.info("Generated token while registering: {}", token);
+        return token;
     }
 
     public String login(AuthRequest request) {
+        log.info("Attempting login for email: {} and request : {}", request.getEmail(),request);
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
 
@@ -47,6 +53,9 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Invalid credentials");
         }
-        return jwtService.generateToken(user.getEmail());
+
+        String token = jwtService.generateToken(user.getEmail());
+        log.info("Generated token: {}", token);
+        return token;
     }
 }

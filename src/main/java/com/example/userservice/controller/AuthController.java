@@ -1,5 +1,6 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.constant.AuthConstants;
 import com.example.userservice.dto.AuthRequest;
 import com.example.userservice.dto.AuthResponse;
 import com.example.userservice.dto.RegisterRequest;
@@ -9,7 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(AuthConstants.AUTH_CONTEXT_PATH)
 public class AuthController {
     private final AuthService authService;
     public AuthController(AuthService authService) { this.authService = authService; }
