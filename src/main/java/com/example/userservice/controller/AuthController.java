@@ -10,7 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(AuthConstants.AUTH_CONTEXT_PATH)
+@RequestMapping({AuthConstants.AUTH_CONTEXT_PATH, AuthConstants.AUTH_DIRECT_PATH})
 public class AuthController {
     private final AuthService authService;
     public AuthController(AuthService authService) { this.authService = authService; }

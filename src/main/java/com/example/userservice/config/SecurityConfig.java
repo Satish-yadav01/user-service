@@ -6,6 +6,7 @@ import com.example.userservice.repository.UserRepository;
 import com.example.userservice.security.JwtAuthenticationFilter;
 import com.example.userservice.security.JwtService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,10 +32,13 @@ public class SecurityConfig {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final String frontendCallbackUrl;
 
-    public SecurityConfig(JwtService jwtService, UserRepository userRepository) {
+    public SecurityConfig(JwtService jwtService, UserRepository userRepository,
+                          @Value("${app.frontend.oauth-callback-url:http://localhost:5173/auth/callback}") String frontendCallbackUrl) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
+        this.frontendCallbackUrl = frontendCallbackUrl;
     }
 
     @Bean
@@ -62,15 +66,17 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth.requestMatchers(
-                            new AntPathRequestMatcher("/api/v1/auth/**"),
+                            new AntPathRequestMatcher(AUTH_CONTEXT_PATH + "/**"),
+                            new AntPathRequestMatcher(AuthConstants.AUTH_DIRECT_PATH + "/**"),
                             new AntPathRequestMatcher("/swagger-ui/**"),
                             new AntPathRequestMatcher("/oauth2/**"),
                             new AntPathRequestMatcher("/actuator/**"))
                     .permitAll()
                     .anyRequest()
                     .authenticated())
-            .oauth2Login(oauth2 -> oauth2.successHandler(
-                    new OAuth2LoginSuccessHandler(jwtService, userRepository))
+            .oauth2Login(oauth2 -> oauth2
+                    .redirectionEndpoint(redirection -> redirection.baseUri("/login/oauth2/code/*"))
+                    .successHandler(new OAuth2LoginSuccessHandler(jwtService, userRepository, frontendCallbackUrl))
             ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(requestLoggingFilter, JwtAuthenticationFilter.class);
 
