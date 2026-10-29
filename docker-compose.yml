@@ -1,31 +1,7 @@
-version: '3.8'
 services:
-  db:
-    image: mysql:8.0
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: user_service
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: rootpassword
-    ports:
-      - "3306:3306"
-    volumes:
-      - db-data:/var/lib/mysql
-
   app:
     build: .
-    depends_on:
-      - db
-    environment:
-      DB_URL: jdbc:mysql://db:3306/user_service?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      DB_USERNAME: user
-      DB_PASSWORD: password
-      JWT_SECRET: change_this_to_a_very_long_random_secret_at_least_32_chars
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:?Set GOOGLE_CLIENT_ID in user-service/.env}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:?Set GOOGLE_CLIENT_SECRET in user-service/.env}
+    env_file:
+      - .env
     ports:
-      - "8081:8081"
-
-volumes:
-  db-data:
+      - "8082:8082"
