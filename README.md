@@ -36,3 +36,14 @@ The Google provider's registered redirect URI remains the user-service callback:
 `{baseUrl}/login/oauth2/code/google`.
 
 Set environment variables for secrets in production (DB credentials, JWT_SECRET, Google client id/secret).
+
+Internal mail-service user-status API: `GET /api/v1/internal/users/{userId}/status`
+returns the user ID and enabled flag (404 when absent) and requires the
+`X-Internal-Api-Key` header. Set `USER_SERVICE_API_KEY` to the same secret in
+this service and mail-service. Configure `USER_SERVICE_BASE_URL` in mail-service
+to point to this service in each environment.
+
+Internal user lookup by email: `GET /api/v1/internal/users/by-email?email={email}`
+returns `id`, `email`, `provider`, `roles`, `enabled`, and `createdAt` (never the
+password). It requires the `X-Internal-Api-Key` header and returns 404 when no
+user matches.

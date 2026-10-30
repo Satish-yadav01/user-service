@@ -38,7 +38,6 @@ public class AuthService {
         u.setRoles("ROLE_USER");
         userRepository.save(u);
         String token = jwtService.generateToken(u.getEmail());
-        log.info("Generated token while registering: {}", token);
         return token;
     }
 
@@ -55,7 +54,6 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(user.getEmail());
-        log.info("Generated token: {}", token);
         return token;
     }
 }

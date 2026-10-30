@@ -75,6 +75,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth.requestMatchers(
                             new AntPathRequestMatcher(AUTH_CONTEXT_PATH + "/**"),
                             new AntPathRequestMatcher(AuthConstants.AUTH_DIRECT_PATH + "/**"),
+                            new AntPathRequestMatcher("/api/v1/internal/users/**"),
                             new AntPathRequestMatcher("/swagger-ui/**"),
                             new AntPathRequestMatcher("/oauth2/**"),
                             new AntPathRequestMatcher("/actuator/**"))

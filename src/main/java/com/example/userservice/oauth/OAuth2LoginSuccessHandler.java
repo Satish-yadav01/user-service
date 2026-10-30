@@ -3,6 +3,7 @@ package com.example.userservice.oauth;
 import com.example.userservice.entity.User;
 import com.example.userservice.repository.UserRepository;
 import com.example.userservice.security.JwtService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -15,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+@Slf4j
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
@@ -31,9 +33,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
+        log.info("OAuth2 login successful for user: {}", authentication.getName());
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
         String email = (String) oauthUser.getAttributes().get("email");
         if (email == null) {
+            log.info("OAuth2 login successful for user: {} but email is null", authentication.getName());
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email not available from provider");
             return;
         }
@@ -56,5 +60,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.sendRedirect(frontendCallbackUrl + "#token="
                 + URLEncoder.encode(token, StandardCharsets.UTF_8.name())
                 + "&tokenType=Bearer");
+
+        log.info("Redirecting to frontend callback URL with token for user: {}", email);
     }
 }
